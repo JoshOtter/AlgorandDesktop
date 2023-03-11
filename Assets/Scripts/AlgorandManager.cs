@@ -14,10 +14,14 @@ using UnityEngine;
 public class AlgorandManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _walletAddressInput;
+    [SerializeField] private GameObject _assetObject;
+
+    [SerializeField] private MenuUIController _menuUIController;
 
     public HttpClient _client = HttpClientConfigurator.ConfigureHttpClient("https://testnet-algorand.api.purestake.io/ps2", APIKeyManager.AlgodAPIKey);
     public string walletAddress;
     public Account account;
+    public List<Asset> assets;
 
     protected static string GetAlgodAPIAddress()
     {
@@ -46,28 +50,40 @@ public class AlgorandManager : MonoBehaviour
 
     private async Task GetWalletInfo()
     {
-        try
+
+        string ALGOD_API_ADDR = "https://mainnet-algorand.api.purestake.io/ps2";
+        string ALGOD_API_TOKEN = APIKeyManager.AlgodAPIKey;
+
+        using var httpClient = HttpClientConfigurator.ConfigureHttpClient(GetAlgodAPIAddress(), ALGOD_API_TOKEN);
+        DefaultApi algodApiInstance = new DefaultApi(httpClient);
+
+        account = await algodApiInstance.AccountInformationAsync(walletAddress, null, Algorand.Algod.Model.Format.Json);
+
+        assets = new List<Asset>();
+
+        int i = 1;
+        foreach (var asset in account.Assets)
         {
-            string ALGOD_API_ADDR = "https://mainnet-algorand.api.purestake.io/ps2";
-            string ALGOD_API_TOKEN = APIKeyManager.AlgodAPIKey;
-
-            using var httpClient = HttpClientConfigurator.ConfigureHttpClient(GetAlgodAPIAddress(), ALGOD_API_TOKEN);
-            DefaultApi algodApiInstance = new DefaultApi(httpClient);
-
-            account = await algodApiInstance.AccountInformationAsync(walletAddress, null, Algorand.Algod.Model.Format.Json);
-
-            foreach (var asset in account.Assets)
+            try
             {
                 var assetInfo = await algodApiInstance.GetAssetByIDAsync(asset.AssetId);
-                Debug.Log(assetInfo.Params.Name);
+                assets.Add(assetInfo);
+                if (i == 1)
+                {
+                    _assetObject.GetComponent<AssetHandler>().InitializeAsset(assetInfo, (int)asset.Amount);
+                    _menuUIController.ActivateAssetMenu();
+                }
+                Debug.Log(assetInfo.Params.Url);
+                //Debug.Log($"Asset #{i}: {assetInfo.Params.Name}");
+                i++;
             }
+            catch (Exception ex)
+            {
+                Debug.Log("Problem recovering asset data");
+            }
+        }
 
 
-            Debug.Log($"Total Assets: {account.Assets.Count}");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.Message);
-        }
+        Debug.Log($"Total Assets: {account.Assets.Count}");
     }
 }

@@ -6,6 +6,7 @@ public class MenuUIController : MonoBehaviour
 {
     [SerializeField] private GameObject _algodKeyPanel;
     [SerializeField] private GameObject _walletAddressPanel;
+    [SerializeField] private GameObject _assetPanel;
 
     private void Start()
     {
@@ -31,5 +32,11 @@ public class MenuUIController : MonoBehaviour
     {
         _walletAddressPanel.SetActive(false);
         _algodKeyPanel.SetActive(true);
+    }
+
+    public void ActivateAssetMenu()
+    {
+        _walletAddressPanel.SetActive(false);
+        _assetPanel.SetActive(true);
     }
 }

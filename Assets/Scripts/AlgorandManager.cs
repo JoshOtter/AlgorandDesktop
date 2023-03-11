@@ -15,8 +15,9 @@ public class AlgorandManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _walletAddressInput;
 
-    public static HttpClient _client = HttpClientConfigurator.ConfigureHttpClient("https://testnet-algorand.api.purestake.io/ps2", APIKeyManager.AlgodAPIKey);
-    public static string walletAddress;
+    public HttpClient _client = HttpClientConfigurator.ConfigureHttpClient("https://testnet-algorand.api.purestake.io/ps2", APIKeyManager.AlgodAPIKey);
+    public string walletAddress;
+    public Account account;
 
     protected static string GetAlgodAPIAddress()
     {
@@ -31,7 +32,7 @@ public class AlgorandManager : MonoBehaviour
         return _ALGOD_API_ADDR;
     }
 
-    protected static DefaultApi GetAlgodApi()
+    protected DefaultApi GetAlgodApi()
     {
         var algodApi = new DefaultApi(_client);
         return algodApi;
@@ -45,13 +46,24 @@ public class AlgorandManager : MonoBehaviour
 
     private async Task GetWalletInfo()
     {
-
-        var algodApi = GetAlgodApi();
         try
         {
-            var accountInfo = await algodApi.AccountInformationAsync(walletAddress, null, Algorand.Algod.Model.Format.Json);
+            string ALGOD_API_ADDR = "https://mainnet-algorand.api.purestake.io/ps2";
+            string ALGOD_API_TOKEN = APIKeyManager.AlgodAPIKey;
 
-            Debug.Log($"Total Assets: {accountInfo.Assets.Count}");
+            using var httpClient = HttpClientConfigurator.ConfigureHttpClient(GetAlgodAPIAddress(), ALGOD_API_TOKEN);
+            DefaultApi algodApiInstance = new DefaultApi(httpClient);
+
+            account = await algodApiInstance.AccountInformationAsync(walletAddress, null, Algorand.Algod.Model.Format.Json);
+
+            foreach (var asset in account.Assets)
+            {
+                var assetInfo = await algodApiInstance.GetAssetByIDAsync(asset.AssetId);
+                Debug.Log(assetInfo.Params.Name);
+            }
+
+
+            Debug.Log($"Total Assets: {account.Assets.Count}");
         }
         catch (Exception e)
         {

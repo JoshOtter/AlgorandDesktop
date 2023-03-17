@@ -21,7 +21,8 @@ public class AlgorandManager : MonoBehaviour
     public HttpClient _client = HttpClientConfigurator.ConfigureHttpClient("https://testnet-algorand.api.purestake.io/ps2", APIKeyManager.AlgodAPIKey);
     public string walletAddress;
     public Account account;
-    public List<Asset> assets;
+    public static List<Asset> assets;
+    public static List<Texture2D> textures;
 
     protected static string GetAlgodAPIAddress()
     {
@@ -46,6 +47,7 @@ public class AlgorandManager : MonoBehaviour
     {
         walletAddress = _walletAddressInput.text;
         await GetWalletInfo();
+
     }
 
     private async Task GetWalletInfo()
@@ -60,6 +62,7 @@ public class AlgorandManager : MonoBehaviour
         account = await algodApiInstance.AccountInformationAsync(walletAddress, null, Algorand.Algod.Model.Format.Json);
 
         assets = new List<Asset>();
+        textures = new List<Texture2D>();
 
         int i = 1;
         foreach (var asset in account.Assets)
@@ -86,4 +89,6 @@ public class AlgorandManager : MonoBehaviour
 
         Debug.Log($"Total Assets: {account.Assets.Count}");
     }
+
+
 }

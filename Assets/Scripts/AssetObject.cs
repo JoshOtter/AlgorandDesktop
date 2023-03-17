@@ -2,6 +2,7 @@ using Algorand.Algod.Model;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [CreateAssetMenu(fileName = "NewAssetObject", menuName = "AssetObject")]
 public class AssetObject : ScriptableObject
@@ -12,6 +13,7 @@ public class AssetObject : ScriptableObject
     public string assetUnitName;
     public int assetAmount;
     public string assetCreator;
+    public Sprite assetImage;
 
     public void InitializeAssetData(Asset asset, int amount)
     {

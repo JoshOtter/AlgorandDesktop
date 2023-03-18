@@ -13,16 +13,18 @@ using UnityEngine;
 
 public class AlgorandManager : MonoBehaviour
 {
+    [Header("Object References")]
     [SerializeField] private TMP_InputField _walletAddressInput;
-    [SerializeField] private GameObject _assetObject;
 
+    [Header("Script References")]
+    [SerializeField] private AssetCreator _assetCreator;
     [SerializeField] private MenuUIController _menuUIController;
 
     public HttpClient _client = HttpClientConfigurator.ConfigureHttpClient("https://testnet-algorand.api.purestake.io/ps2", APIKeyManager.AlgodAPIKey);
-    public string walletAddress;
+    private string _walletAddress;
     public Account account;
     public static List<Asset> assets;
-    public static List<Texture2D> textures;
+    public static List<ulong> amounts;
 
     protected static string GetAlgodAPIAddress()
     {
@@ -45,7 +47,7 @@ public class AlgorandManager : MonoBehaviour
 
     public async void SetWalletAddress()
     {
-        walletAddress = _walletAddressInput.text;
+        _walletAddress = _walletAddressInput.text;
         await GetWalletInfo();
 
     }
@@ -59,10 +61,9 @@ public class AlgorandManager : MonoBehaviour
         using var httpClient = HttpClientConfigurator.ConfigureHttpClient(GetAlgodAPIAddress(), ALGOD_API_TOKEN);
         DefaultApi algodApiInstance = new DefaultApi(httpClient);
 
-        account = await algodApiInstance.AccountInformationAsync(walletAddress, null, Algorand.Algod.Model.Format.Json);
+        account = await algodApiInstance.AccountInformationAsync(_walletAddress, null, Algorand.Algod.Model.Format.Json);
 
         assets = new List<Asset>();
-        textures = new List<Texture2D>();
 
         int i = 1;
         foreach (var asset in account.Assets)
@@ -71,23 +72,19 @@ public class AlgorandManager : MonoBehaviour
             {
                 var assetInfo = await algodApiInstance.GetAssetByIDAsync(asset.AssetId);
                 assets.Add(assetInfo);
-                if (i == 1)
-                {
-                    _assetObject.GetComponent<AssetHandler>().InitializeAsset(assetInfo, (int)asset.Amount);
-                    _menuUIController.ActivateAssetMenu();
-                }
-                Debug.Log(assetInfo.Params.Url);
-                //Debug.Log($"Asset #{i}: {assetInfo.Params.Name}");
+                amounts.Add(asset.Amount);
                 i++;
             }
             catch (Exception ex)
             {
-                Debug.Log("Problem recovering asset data");
+                Debug.Log("Problem recovering asset data: " + ex.Message);
             }
         }
 
 
         Debug.Log($"Total Assets: {account.Assets.Count}");
+        _menuUIController.ActivateAssetMenu();
+        _assetCreator.StartDownloading(assets, amounts);
     }
 
 

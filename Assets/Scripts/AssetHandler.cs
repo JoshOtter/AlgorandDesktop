@@ -3,24 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AssetHandler : MonoBehaviour
 {
     public AssetObject assetObject;
-    public TextMeshProUGUI _assetName;
-    public TextMeshProUGUI _assetUnitName;
-    public TextMeshProUGUI _assetId;
-    public TextMeshProUGUI _assetCreator;
-    public TextMeshProUGUI _assetAmount;
+    public TextMeshProUGUI assetName;
+    public Image assetImage;
 
-    public void InitializeAsset(Asset asset, int amount)
+    public void InitializeAsset(Sprite sprite, Asset asset, ulong amount)
     {
-        assetObject.InitializeAssetData(asset, amount);
+        assetObject.InitializeAssetData(sprite, asset, amount);
 
-        _assetName.text = assetObject.assetName;
-        _assetUnitName.text = assetObject.assetUnitName;
-        _assetId.text = assetObject.assetId.ToString();
-        _assetCreator.text = assetObject.assetCreator;
-        _assetAmount.text = assetObject.assetAmount.ToString();
+        assetName.text = assetObject.assetName;
     }
 }

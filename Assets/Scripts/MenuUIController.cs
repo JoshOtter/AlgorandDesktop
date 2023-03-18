@@ -21,7 +21,6 @@ public class MenuUIController : MonoBehaviour
         }
     }
 
-
     public void ActivateWalletAddressPanel()
     {
         _algodKeyPanel.SetActive(false);
@@ -39,4 +38,6 @@ public class MenuUIController : MonoBehaviour
         _walletAddressPanel.SetActive(false);
         _assetPanel.SetActive(true);
     }
+
+
 }

@@ -54,8 +54,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   assetObject: {fileID: 11400000, guid: 8a93b4343a92b4d479f66840b49693a0, type: 2}
-  assetName: {fileID: 0}
-  assetImage: {fileID: 0}
+  assetName: {fileID: 5601281773872786466}
+  assetImage: {fileID: 5276448984317050106}
 --- !u!222 &6709394835419593762
 CanvasRenderer:
   m_ObjectHideFlags: 0

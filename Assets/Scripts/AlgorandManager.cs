@@ -64,6 +64,7 @@ public class AlgorandManager : MonoBehaviour
         account = await algodApiInstance.AccountInformationAsync(_walletAddress, null, Algorand.Algod.Model.Format.Json);
 
         assets = new List<Asset>();
+        amounts = new List<ulong>();
 
         int i = 1;
         foreach (var asset in account.Assets)

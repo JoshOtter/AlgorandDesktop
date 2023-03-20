@@ -16,5 +16,6 @@ public class AssetHandler : MonoBehaviour
         assetObject.InitializeAssetData(sprite, asset, amount);
 
         assetName.text = assetObject.assetName;
+        assetImage.sprite = assetObject.assetImage;
     }
 }

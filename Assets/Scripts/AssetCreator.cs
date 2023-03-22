@@ -8,6 +8,7 @@ public class AssetCreator : MonoBehaviour
 {
     [SerializeField] private GameObject _assetDisplayPrefab;
     [SerializeField] private Transform _AssetContainer;
+    [SerializeField] private GameObject _pagePrefab;
 
     public void StartDownloading(List<Asset> assets, List<ulong> amounts)
     {

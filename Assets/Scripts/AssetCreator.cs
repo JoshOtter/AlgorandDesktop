@@ -1,4 +1,5 @@
 using Algorand.Algod.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,11 +8,15 @@ using UnityEngine.Networking;
 public class AssetCreator : MonoBehaviour
 {
     [SerializeField] private GameObject _assetDisplayPrefab;
-    [SerializeField] private Transform _AssetContainer;
     [SerializeField] private GameObject _pagePrefab;
+    [SerializeField] private Transform _pageContainer;
+    private List<GameObject> _pages;
+    private int _currentPage = 0;
+    private int _assetsPerPage = 12;
 
     public void StartDownloading(List<Asset> assets, List<ulong> amounts)
     {
+        _pages = new List<GameObject>();
         for (var i = 0; i < assets.Count; i++)
         {
             StartCoroutine(DownloadImage(assets[i], amounts[i]));
@@ -41,9 +46,33 @@ public class AssetCreator : MonoBehaviour
             Debug.Log(texture);
             Sprite sprite = TextureToSprite(texture);
 
-            GameObject assetDisplay = Instantiate(_assetDisplayPrefab, _AssetContainer, false);
+            var page = GetCurrentPage();
+
+            GameObject assetDisplay = Instantiate(_assetDisplayPrefab, page.transform, false);
             AssetHandler display = assetDisplay.GetComponent<AssetHandler>();
             display.InitializeAsset(sprite, asset, amount);
+        }
+    }
+
+    private GameObject GetCurrentPage()
+    {
+        if (_pages.Count == 0)
+        {
+            GameObject newPage = Instantiate(_pagePrefab, _pageContainer);
+            _pages.Add(newPage);
+        }
+
+        if (_pages[_currentPage].transform.childCount <= _assetsPerPage - 1)
+        {
+            return _pages[_currentPage];
+        }
+        else
+        {
+            _pages[_currentPage].SetActive(false);
+            GameObject newPage = Instantiate(_pagePrefab, _pageContainer);
+            _pages.Add(newPage);
+            _currentPage++;
+            return _pages[_currentPage];
         }
     }
 
@@ -66,6 +95,24 @@ public class AssetCreator : MonoBehaviour
         }
 
         return ipfsUrl;
+    }
+
+    public void PageLeft()
+    {
+        if (_currentPage == 0) return;
+
+        _pages[_currentPage].SetActive(false);
+        _currentPage--;
+        _pages[_currentPage].SetActive(true);
+    }
+
+    public void PageRight()
+    {
+        if (_currentPage == _pages.Count - 1) return;
+
+        _pages[_currentPage].SetActive(false);
+        _currentPage++;
+        _pages[_currentPage].SetActive(true);
     }
 
 }

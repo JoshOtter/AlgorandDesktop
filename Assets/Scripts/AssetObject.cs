@@ -1,11 +1,7 @@
 using Algorand.Algod.Model;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-[CreateAssetMenu(fileName = "NewAssetObject", menuName = "AssetObject")]
-public class AssetObject : ScriptableObject
+public class AssetObject : MonoBehaviour
 {
     public Asset asset;
     public ulong assetId;

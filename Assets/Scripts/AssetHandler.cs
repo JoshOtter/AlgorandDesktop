@@ -1,20 +1,21 @@
 using Algorand.Algod.Model;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AssetHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class AssetHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public AssetObject assetObject;
     public TextMeshProUGUI assetName;
     public Image assetImage;
     public GameObject hoverObject;
+    private AssetCreator _assetCreator;
 
     public void InitializeAsset(Sprite sprite, Asset asset, ulong amount)
     {
+        assetObject = new AssetObject();
+        _assetCreator = AssetCreator.assetCreator;
         assetObject.InitializeAssetData(sprite, asset, amount);
 
         assetName.text = assetObject.assetName;
@@ -29,5 +30,11 @@ public class AssetHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void OnPointerExit(PointerEventData eventData)
     {
         hoverObject.SetActive(false);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        hoverObject.SetActive(false);
+        _assetCreator.ActivateAssetInfoPanel(assetObject);
     }
 }

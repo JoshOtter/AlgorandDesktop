@@ -10,9 +10,20 @@ public class AssetCreator : MonoBehaviour
     [SerializeField] private GameObject _assetDisplayPrefab;
     [SerializeField] private GameObject _pagePrefab;
     [SerializeField] private Transform _pageContainer;
+    [SerializeField] private GameObject _buttons;
+    [SerializeField] private GameObject _assetDisplayPanel;
+    [SerializeField] private AssetDisplayHandler _assetDisplayHandler;
+
+    public static AssetCreator assetCreator;
+
     private List<GameObject> _pages;
     private int _currentPage = 0;
     private int _assetsPerPage = 12;
+
+    private void Start()
+    {
+        assetCreator = this;
+    }
 
     public void StartDownloading(List<Asset> assets, List<ulong> amounts)
     {
@@ -115,4 +126,18 @@ public class AssetCreator : MonoBehaviour
         _pages[_currentPage].SetActive(true);
     }
 
+    public void ActivateAssetInfoPanel(AssetObject asset)
+    {
+        _assetDisplayHandler.DisplayInfo(asset);
+        _pages[_currentPage].SetActive(false);
+        _buttons.SetActive(false);
+        _assetDisplayPanel.SetActive(true);
+    }
+
+    public void DeactivateAssetInfoPanel()
+    {
+        _assetDisplayPanel.SetActive(false);
+        _pages[_currentPage].SetActive(true);
+        _buttons.SetActive(true);
+    }
 }

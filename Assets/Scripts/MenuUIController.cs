@@ -38,6 +38,4 @@ public class MenuUIController : MonoBehaviour
         _walletAddressPanel.SetActive(false);
         _assetPanel.SetActive(true);
     }
-
-
 }
